@@ -532,3 +532,20 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+int 
+getParentID(int pid)
+{
+  struct proc *p;
+  int ppid;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid){
+      ppid = p->parent->pid;
+      release(&ptable.lock);
+      return ppid;
+    }
+  }
+  release(&ptable.lock);
+  return -1;
+}
