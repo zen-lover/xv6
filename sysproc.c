@@ -105,3 +105,15 @@ sys_getChildren(void)
   pid = myproc()->pid;
   return children(pid);
 }
+
+int
+sys_getSyscallCounter(void)
+{
+
+  int syscall;
+  if(argint(0, &syscall) < 0)
+    return -1;
+  int pid;
+  pid = myproc()->pid;
+  return syscallCounter(syscall, pid);
+}
