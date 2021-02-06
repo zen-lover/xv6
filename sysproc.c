@@ -128,3 +128,12 @@ sys_setPriority(void)
   pid = myproc()->pid;
   return setPriority(pid, priority);
 }
+
+int
+sys_changePolicy(void)
+{
+  int policy;
+  if(argint(0, &policy) < 0)
+    return -1;
+  return setPriority(policy);
+}

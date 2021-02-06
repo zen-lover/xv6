@@ -13,3 +13,7 @@
 #define FSSIZE       1000  // size of file system in blocks
 #define HIGHPRIORITY  1 
 #define LOWPRIORITY   6
+#define DEFAULTSCHED    0
+#define ROBINSCHED      1
+#define PRIORITYSCHED   2
+#define MULTISCHED      3

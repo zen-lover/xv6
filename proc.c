@@ -88,7 +88,8 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  p->priority = 3;          // For priority scheduling
+  if(Policy == PRIORITYSCHED)
+    p->priority = 3;          // For priority scheduling
 
   release(&ptable.lock);
 
@@ -323,7 +324,7 @@ wait(void)
 void
 scheduler(void)
 {
-  struct proc *p, *p1;
+  struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -337,8 +338,10 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
 
-
-      // For priority scheduling
+      if (Policy == PRIORITYSCHED)
+      {
+        struct proc *p1;
+        // For priority scheduling
       highP = p;
       for(p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++){
         if(p1->state != RUNNABLE)
@@ -349,8 +352,8 @@ scheduler(void)
       p = highP;
       switchuvm(p);
       // End part for priority scheduling
-
-
+      }
+      
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
@@ -627,6 +630,17 @@ setPriority(int pid, int priority)
       return pid;
     }
   }
+  release(&ptable.lock);
+  return -1;
+}
+
+int
+changePolicy(int policy)
+{
+  acquire(&ptable.lock);
+  if(policy < DEFAULTSCHED || policy < MULTISCHED)
+    policy = DEFAULTSCHED; 
+  Policy = policy;
   release(&ptable.lock);
   return -1;
 }

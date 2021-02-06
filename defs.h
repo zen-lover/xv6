@@ -10,6 +10,8 @@ struct sleeplock;
 struct stat;
 struct superblock;
 
+int Policy;
+
 // bio.c
 void            binit(void);
 struct buf*     bread(uint, uint);
@@ -124,6 +126,7 @@ int             getParentID(int);
 int *           children(int);
 int             syscallCounter(int, int);
 int             setPriority(int pid, int priority);
+int             changePolicy(int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

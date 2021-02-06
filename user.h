@@ -27,6 +27,7 @@ int getParentID(void);
 int* getChildren(void);
 int getSyscallCounter(int);
 int setPriority(int);
+int changePolicy(int);
 
 // ulib.c
 int stat(const char*, struct stat*);
