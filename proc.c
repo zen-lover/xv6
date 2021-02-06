@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "stddef.h"
 
 struct {
   struct spinlock lock;
@@ -19,6 +20,8 @@ extern void forkret(void);
 extern void trapret(void);
 
 static void wakeup1(void *chan);
+
+int Policy;
 
 void
 pinit(void)
@@ -331,7 +334,6 @@ scheduler(void)
   for(;;){
     // Enable interrupts on this processor.
     sti();
-    struct proc *highP = NULL;
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
@@ -340,6 +342,7 @@ scheduler(void)
 
       if (Policy == PRIORITYSCHED)
       {
+        struct proc *highP = NULL;
         struct proc *p1;
         // For priority scheduling
       highP = p;
@@ -348,6 +351,7 @@ scheduler(void)
           continue;
         if(highP->priority > p1->priority)   // larger value, lower priority
           highP = p1;
+      }
     
       p = highP;
       switchuvm(p);
