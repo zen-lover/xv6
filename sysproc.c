@@ -117,3 +117,14 @@ sys_getSyscallCounter(void)
   pid = myproc()->pid;
   return syscallCounter(syscall, pid);
 }
+
+int
+sys_setPriority(void)
+{
+  int priority;
+  if(argint(0, &priority) < 0)
+    return -1;
+  int pid;
+  pid = myproc()->pid;
+  return setPriority(pid, priority);
+}

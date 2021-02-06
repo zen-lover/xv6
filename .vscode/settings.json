@@ -5,7 +5,9 @@
         "user.h": "c",
         "syscall.h": "c",
         "defs.h": "c",
-        "limits": "c"
+        "limits": "c",
+        "string_view": "c",
+        "system_error": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

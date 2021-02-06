@@ -88,6 +88,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = 3;          // For priority scheduling
 
   release(&ptable.lock);
 
@@ -322,19 +323,33 @@ wait(void)
 void
 scheduler(void)
 {
-  struct proc *p;
+  struct proc *p, *p1;
   struct cpu *c = mycpu();
   c->proc = 0;
   
   for(;;){
     // Enable interrupts on this processor.
     sti();
-
+    struct proc *highP = NULL;
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
+
+
+      // For priority scheduling
+      highP = p;
+      for(p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++){
+        if(p1->state != RUNNABLE)
+          continue;
+        if(highP->priority > p1->priority)   // larger value, lower priority
+          highP = p1;
+    
+      p = highP;
+      switchuvm(p);
+      // End part for priority scheduling
+
 
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
@@ -591,6 +606,25 @@ syscallCounter(int syscall, int pid)
     if(p->pid == pid){
       release(&ptable.lock);
       return p->syscallCounter[syscall];
+    }
+  }
+  release(&ptable.lock);
+  return -1;
+}
+
+int
+setPriority(int pid, int priority)
+{
+  struct proc *p;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid){
+      if(priority < HIGHPRIORITY || priority > LOWPRIORITY){
+        priority = LOWPRIORITY - 1;
+      }
+      p->priority = priority;
+      release(&ptable.lock);
+      return pid;
     }
   }
   release(&ptable.lock);
