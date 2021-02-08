@@ -93,6 +93,8 @@ found:
   p->pid = nextpid++;
   if(Policy == PRIORITYSCHED)
     p->priority = 3;          // For priority scheduling
+  else if(Policy == ROBINSCHED)    
+    p->RoundRobin = 0;
 
   release(&ptable.lock);
 
@@ -408,8 +410,22 @@ void
 yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
-  myproc()->state = RUNNABLE;
-  sched();
+  if (Policy == ROBINSCHED)
+  {
+    if (myproc()->RoundRobin < QUANTUM)
+        myproc()->RoundRobin++;
+    else
+    {
+      myproc()->RoundRobin = 0;
+      myproc()->state = RUNNABLE;
+      sched();
+    }
+
+  }else
+  {
+    myproc()->state = RUNNABLE;
+    sched();
+  }  
   release(&ptable.lock);
 }
 

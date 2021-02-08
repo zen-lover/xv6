@@ -17,3 +17,4 @@
 #define ROBINSCHED      1
 #define PRIORITYSCHED   2
 #define MULTISCHED      3
+#define QUANTUM         10
