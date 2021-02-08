@@ -4,35 +4,27 @@
 
 int stdout = 1;
 
-int 
-main() {
+void print_children(int* children){
+    for (int i =0;i<20;i++){
+        printf(1,"%d _",children[i]);
+    }
+    printf(1,"\n");
+}
 
-    printf(stdout, "pid is: %d\n", getpid()); 
-    
-    int n1 = fork(); 
-    // int n2 = fork();
-    // int n3 = fork();
-    // int n4 = fork(); 
-    printf(stdout, "%d\n", n1);
-    // printf(stdout, "%d\n", n2);
-    // printf(stdout, "%d\n", n3);
-    // printf(stdout, "%d\n", n4);
+int main(){
 
-    int *p;
-    p = getChildren();
-    printf(stdout, "first child: %d\n", *p); 
-//  && n2 > 0 && n3 > 0 && n4 > 0
-    if (n1 > 0) { 
-        printf(stdout, "pid is: %d\n", getpid()); 
-        printf(stdout, "ppid is: %d\n", getParentID());
-        printf(stdout, "childrens are:\n");  
-        // for (int i = 0; *(p + i) != -1; i++ ) {
-        //     printf(stdout, "salam");
-        //     printf(stdout, "*(p + %d) : %d\t", i, *(p + i));
-        // }
-    } 
-
-    while(wait() != -1) { }
+    int pid1 = fork();
+    int pid2 = fork();
+    int pid3 = fork();
+    int pid4 = fork();
+    if (pid1>0 && pid2>0 && pid3>0 && pid4>0)
+    {
+     int* children=(int *)malloc(sizeof(int)*20);
+     getChildren(children);
+     printf(1,"The process is %d and the children are ",getpid());
+     print_children(children);   
+    }
+    while (wait()!=-1){  }
     sleep(1);
     exit();
 }

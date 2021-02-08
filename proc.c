@@ -596,35 +596,28 @@ getParentID(int pid)
 }
 
 
-int * 
-children(int pid)
-{
-  struct proc *p;
-  int count = 0;
-  static int children[4];
-
-  acquire(&ptable.lock);
-
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->parent->pid == pid){
-      children[count] = p->pid;
-      count++;
-    } 
-  children[count] = -1;
-
-  cprintf("count is--- %d\n",count);
-  cprintf("pid %d\n",pid);
+int 
+getChildren(int* children){
+    struct proc *p;
+    struct proc *curproc = myproc();
+    int curpid=curproc->pid;
+    acquire(&ptable.lock);
+    int count=0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+      if(p->parent->pid == curpid){
+          children[count]=p->pid;
+          count++;
+      }
+    
+    children[count]=0;
+    cprintf("count is--- %d\n",count);
     for (int i = 0; i < count; i++)
     {
       cprintf("%d---\n",children[i]);
     }
     cprintf("\n");
-
-
-  release(&ptable.lock);
-
-  return children;
-
+    release(&ptable.lock);
+    return 1;
 }
 
 int

@@ -98,12 +98,12 @@ sys_getParentID(void)
   return getParentID(pid);
 }
 
-int *
-sys_getChildren(void)
-{
-  int pid;
-  pid = myproc()->pid;
-  return children(pid);
+int
+sys_getChildren(void){
+  int* children;
+  if(argptr(0, (void *)&children,sizeof(*children)) < 0)
+    return -1;
+  return getChildren(children);
 }
 
 int

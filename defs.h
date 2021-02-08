@@ -121,7 +121,7 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 int             getParentID(int);
-int *           children(int);
+int             getChildren(int*);
 int             syscallCounter(int, int);
 int             setPriority(int pid, int priority);
 int             changePolicy(int);
