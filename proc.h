@@ -52,6 +52,11 @@ struct proc {
   int syscallCounter[204];     // Syscall counter
   int priority;                 // Process priority
   int RoundRobin;               // For roundRobin scheduling
+  int creationTime; 
+  int terminationTime;
+  int runningTime;
+  int readyTime;
+  int sleepingTime;
 };
 
 // Process memory is laid out contiguously, low addresses first:

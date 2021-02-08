@@ -125,6 +125,8 @@ int *           children(int);
 int             syscallCounter(int, int);
 int             setPriority(int pid, int priority);
 int             changePolicy(int);
+int             setTimes(int*, int* , int*);
+void            updateTimes();
 
 // swtch.S
 void            swtch(struct context**, struct context*);
