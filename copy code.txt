@@ -1,0 +1,231 @@
+acquire(&ptable.lock);
+
+    if (Policy == PRIORITYSCHED)
+    {
+      int maxPriority = HIGHPRIORITY;
+      for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+      {
+        if (p->state != RUNNABLE)
+          continue;
+
+        if (p->priority < maxPriority)
+        {
+          maxPriority = p->priority;
+        }
+      }
+      // Loop over process table looking for process to run.
+      for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+      {
+        if (p->state != RUNNABLE)
+          continue;
+
+        if (p->priority == maxPriority)
+        {
+          // Switch to chosen process.  It is the process's job
+          // to release ptable.lock and then reacquire it
+          // before jumping back to us.
+          c->proc = p;
+          switchuvm(p);
+          p->state = RUNNING;
+
+          swtch(&(c->scheduler), p->context);
+          switchkvm();
+
+          // Process is done running for now.
+          // It should have changed its p->state before coming back.
+          c->proc = 0;
+        }
+      }
+    }
+    else if (Policy == DEFAULTSCHED || Policy == ROBINSCHED)
+    {
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+      }
+    }
+    else if (Policy == PRIORITYSCHED)
+    {
+
+      // int i;
+      int runnableStates = 1;
+
+      currentQueue = PARENTQUEUE;
+      for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+      {
+        if (p->state != RUNNABLE || p->queue!=PARENTQUEUE)
+          continue;
+
+        // Switch to chosen process.  It is the process's job
+        // to release ptable.lock and then reacquire it
+        // before jumping back to us.
+        c->proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
+
+        swtch(&(c->scheduler), p->context);
+        switchkvm();
+
+        // Process is done running for now.
+        // It should have changed its p->state before coming back.
+        c->proc = 0;
+      }
+
+      currentQueue = DEFAULTQUEUE;
+      while (runnableStates > 0)
+      {
+        runnableStates = 0;
+        for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+        {
+          if (p->state != RUNNABLE || p->queue!=DEFAULTQUEUE)
+            continue;
+
+          runnableStates = 1;
+          // Switch to chosen process.  It is the process's job
+          // to release ptable.lock and then reacquire it
+          // before jumping back to us.
+          c->proc = p;
+          switchuvm(p);
+          p->state = RUNNING;
+
+          swtch(&(c->scheduler), p->context);
+          switchkvm();
+
+          // Process is done running for now.
+          // It should have changed its p->state before coming back.
+          c->proc = 0;
+        }
+      }
+
+      runnableStates = 1;
+      currentQueue = PRIORITYQUEUE;
+      while (runnableStates > 0)
+      {
+        runnableStates = 0;
+        int maxPriority = 6;
+        for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+        {
+          if (p->state != RUNNABLE || p->queue!=PRIORITYQUEUE)
+            continue;
+
+          runnableStates = 1;
+
+          if (p->priority < maxPriority)
+          {
+            maxPriority = p->priority;
+          }
+        }
+        // Loop over process table looking for process to run.
+        for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+        {
+          if (p->state != RUNNABLE  || p->queue!=PRIORITYQUEUE)
+            continue;
+
+          if (p->priority == maxPriority)
+          {
+            // Switch to chosen process.  It is the process's job
+            // to release ptable.lock and then reacquire it
+            // before jumping back to us.
+            c->proc = p;
+            switchuvm(p);
+            p->state = RUNNING;
+
+            swtch(&(c->scheduler), p->context);
+            switchkvm();
+
+            // Process is done running for now.
+            // It should have changed its p->state before coming back.
+            c->proc = 0;
+          }
+        }
+      }
+
+      runnableStates = 1;
+      currentQueue = XPRIORITYQUEUE;
+      while (runnableStates)
+      {
+        runnableStates = 0;
+        int maxPriority = 1;
+        for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+        {
+          if (p->state != RUNNABLE  || p->queue!=XPRIORITYQUEUE)
+            continue;
+
+          runnableStates = 1;
+
+          if (p->priority > maxPriority)
+          {
+            maxPriority = p->priority;
+          }
+        }
+        // Loop over process table looking for process to run.
+        for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+        {
+          if (p->state != RUNNABLE || p->queue!=XPRIORITYQUEUE)
+            continue;
+
+          if (p->priority == maxPriority)
+          {
+            // Switch to chosen process.  It is the process's job
+            // to release ptable.lock and then reacquire it
+            // before jumping back to us.
+            c->proc = p;
+            switchuvm(p);
+            p->state = RUNNING;
+
+            swtch(&(c->scheduler), p->context);
+            switchkvm();
+
+            // Process is done running for now.
+            // It should have changed its p->state before coming back.
+            c->proc = 0;
+          }
+        }
+      }
+
+      runnableStates = 1;
+      currentQueue = ROUNDROBINQUEUE;
+      while (runnableStates > 0)
+      {
+        
+        runnableStates = 0;
+        for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+        {
+          if (p->state != RUNNABLE || p->queue!=ROUNDROBINQUEUE)
+            continue;
+
+          runnableStates = 1;
+          // Switch to chosen process.  It is the process's job
+          // to release ptable.lock and then reacquire it
+          // before jumping back to us.
+          c->proc = p;
+          switchuvm(p);
+          p->state = RUNNING;
+
+          swtch(&(c->scheduler), p->context);
+          switchkvm();
+
+          // Process is done running for now.
+          // It should have changed its p->state before coming back.
+          c->proc = 0;
+        }
+      }
+
+      currentQueue = NOQUEUE;
+    }
+  
+    release(&ptable.lock);
