@@ -707,7 +707,7 @@ setTimes(int* cpuBurstTime,int* turnAroundTime ,int* waitingTime)
         *turnAroundTime = p->terminationTime - p->creationTime;
         *cpuBurstTime = p->runningTime;
         *waitingTime = p->readyTime;
-        cprintf("\nkernel : %d %d %d %d %d \n",p->creationTime,p->terminationTime,p->runningTime,p->readyTime,p->sleepingTime);
+        // cprintf("\nkernel : %d %d %d %d %d \n",p->creationTime,p->terminationTime,p->runningTime,p->readyTime,p->sleepingTime);
 
         pid = p->pid;
         kfree(p->kstack);
