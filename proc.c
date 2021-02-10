@@ -8,6 +8,17 @@
 #include "spinlock.h"
 #include "stddef.h"
 
+enum currentQueue currentQueue = NOQUEUE;
+
+
+enum currentQueue currentQueue;
+
+struct queue defaultQueue;
+struct queue priorityQueue;
+struct queue xPriorityQueue;
+struct queue roundRobinQueue;
+struct queue noQueue;
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -417,7 +428,7 @@ void
 yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
-  if (Policy == ROBINSCHED)
+  if (Policy == ROBINSCHED || currentQueue == ROUNDROBINQUEUE)
   {
     if (myproc()->RoundRobin < QUANTUM)
         myproc()->RoundRobin++;
@@ -428,7 +439,8 @@ yield(void)
       sched();
     }
 
-  }else
+  }
+  else
   {
     myproc()->state = RUNNABLE;
     sched();
@@ -704,10 +716,10 @@ setTimes(int* cpuBurstTime,int* turnAroundTime ,int* waitingTime)
         // Found one.
 
         p->terminationTime = ticks;
-        *turnAroundTime = p->terminationTime - p->creationTime;
+        *turnAroundTime = p->runningTime + p->readyTime + p->sleepingTime;
         *cpuBurstTime = p->runningTime;
         *waitingTime = p->readyTime;
-        // cprintf("\nkernel : %d %d %d %d %d \n",p->creationTime,p->terminationTime,p->runningTime,p->readyTime,p->sleepingTime);
+        // cprintf("\nkernel  %d : %d %d %d %d %d \n", p->pid, p->creationTime, p->terminationTime, p->runningTime, p->readyTime, p->sleepingTime);
 
         pid = p->pid;
         kfree(p->kstack);
@@ -741,5 +753,43 @@ setTimes(int* cpuBurstTime,int* turnAroundTime ,int* waitingTime)
     // Wait for children to exit.  (See wakeup1 call in proc_exit.)
     sleep(curproc, &ptable.lock); //DOC: wait-sleep
   }
+  return 0;
+} 
+
+
+int pushToQueue(int queueNumber, int pid)
+{
+  acquire(&ptable.lock);
+  struct proc *p;
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+    if (p->pid == pid)
+      p->queue = queueNumber;
+  release(&ptable.lock);
+
+  // if (queueNumber == NOQUEUE)
+  // {
+  //   noQueue.queue[noQueue.tail] = p;
+  //   noQueue.tail++;
+  // }
+  // if (queueNumber == DEFAULTQUEUE)
+  // {
+  //   defaultQueue.queue[defaultQueue.tail] = p;
+  //   defaultQueue.tail++;
+  // }
+  // if (queueNumber == PRIORITYQUEUE)
+  // {
+  //   priorityQueue.queue[priorityQueue.tail] = p;
+  //   priorityQueue.tail++;
+  // }
+  // if (queueNumber == XPRIORITYQUEUE)
+  // {
+  //   xPriorityQueue.queue[xPriorityQueue.tail] = p;
+  //   xPriorityQueue.tail++;
+  // }
+  // if (queueNumber == ROUNDROBINQUEUE)
+  // {
+  //   roundRobinQueue.queue[roundRobinQueue.tail] = p;
+  //   roundRobinQueue.tail++;
+  // }
   return 0;
 } 

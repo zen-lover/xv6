@@ -127,6 +127,7 @@ int             setPriority(int pid, int priority);
 int             changePolicy(int);
 int             setTimes(int*, int* , int*);
 void            updateTimes();
+int             pushToQueue(int, int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

@@ -13,6 +13,30 @@ struct cpu {
 extern struct cpu cpus[NCPU];
 extern int ncpu;
 
+enum currentQueue
+{
+  NOQUEUE = 0,
+  DEFAULTQUEUE = 1,
+  PRIORITYQUEUE = 2,
+  XPRIORITYQUEUE = 3,
+  ROUNDROBINQUEUE = 4
+};
+
+
+extern enum currentQueue currentQueue;
+
+extern struct queue defaultQueue;
+extern struct queue priorityQueue;
+extern struct queue xPriorityQueue;
+extern struct queue roundRobinQueue;
+extern struct queue noQueue;
+
+typedef struct queue
+{
+  struct proc *queue[NPROC];
+  int tail;
+} queue;
+
 //PAGEBREAK: 17
 // Saved registers for kernel context switches.
 // Don't need to save all the segment registers (%cs, etc),
@@ -57,6 +81,7 @@ struct proc {
   int runningTime;
   int readyTime;
   int sleepingTime;
+  enum currentQueue queue;
 };
 
 // Process memory is laid out contiguously, low addresses first:

@@ -109,6 +109,7 @@ extern int sys_getSyscallCounter(void);
 extern int sys_setPriority(void);
 extern int sys_changePolicy(void);
 extern int sys_setTimes(void);
+extern int sys_pushToQueue(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -138,6 +139,7 @@ static int (*syscalls[])(void) = {
 [SYS_setPriority] sys_setPriority,
 [SYS_changePolicy] sys_changePolicy,
 [SYS_setTimes] sys_setTimes,
+[SYS_pushToQueue] sys_pushToQueue,
 
 };
 

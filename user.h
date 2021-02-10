@@ -29,6 +29,7 @@ int getSyscallCounter(int);
 int setPriority(int);
 int changePolicy(int);
 int setTimes(int*,int*,int*);
+int pushToQueue(int, int);
 
 // ulib.c
 int stat(const char*, struct stat*);
