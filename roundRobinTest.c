@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     {
         int j;
         for (j = 1; j <= 1000; j++)
-            printf(1, "  /%d/:/%d/  ", getpid(), j);
+            printf(1, "  /%d/:/%d/  \n", getpid(), j);
     }
 
     if (getpid() == base_pid)
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
         totalWaiting += waitings[i];
     }
 
-    printf(1,"\n\naverages of total   %d      %d        %d", totalTurnAround / 30, totalCpuBurst / 30, totalWaiting / 30);
+    printf(1,"\n\naverages of total   %d      %d        %d\n", totalTurnAround / 30, totalCpuBurst / 30, totalWaiting / 30);
 
 
     exit();

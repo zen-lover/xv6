@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
     if (getpid() != base_pid)
         for (j = 1; j <= 250; j++)
-            printf(1, "  /%d/:/%d/  ", getpid(), j);
+            printf(1, "  /%d/:/%d/  \n", getpid(), j);
 
     if (getpid() == base_pid)
         for (i = 0; i < 30; i++)
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         totalCpuBurst += totalClassesCpuBurst[i];
         totalWaiting += totalClassesWaiting[i];
     }
-    printf(1,"\n\naverages of total   %d      %d        %d", totalTurnAround / 30, totalCpuBurst / 30, totalWaiting / 30);
+    printf(1,"\n\naverages of total   %d      %d        %d\n", totalTurnAround / 30, totalCpuBurst / 30, totalWaiting / 30);
 
     exit();
 } 
